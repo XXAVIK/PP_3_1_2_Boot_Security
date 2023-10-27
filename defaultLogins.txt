@@ -1,0 +1,7 @@
+Admin
+login - admin
+password - 100
+
+User
+login - user
+password - 100
