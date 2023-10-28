@@ -1,8 +1,7 @@
 package ru.kata.spring.boot_security.demo.service;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,14 +26,6 @@ public class UserService implements UserDetailsService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     BCryptPasswordEncoder bCryptPasswordEncoder;
-
-
-    // Declaring the color
-    public static final String COLOR_RESET = "\u001B[0m";
-    public static final String YELLOW = "\u001B[33m";
-
-
-    private Logger logger = LoggerFactory.getLogger(UserService.class);
 
 
     @Autowired
@@ -80,12 +71,8 @@ public class UserService implements UserDetailsService {
         User userFromDB = userRepository.findByUsername(user.getUsername());
 
         if (userFromDB != null) {
-            logger.info(YELLOW + "Попытка создания дубликата юзернэйма " + COLOR_RESET + user.getUsername());
-
             return false;
         }
-
-        logger.info(YELLOW + "Создание нового юзера " + COLOR_RESET + user.getUsername());
         user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
@@ -104,7 +91,6 @@ public class UserService implements UserDetailsService {
         //Проверяю существует ли юзернэйм из инпута в БД
         //Если уже существует, значит это либо пользователь без изменений, либо имя оставили без изменений
         if (usernameFromInput.equals(usernameFromDB)) {
-            logger.info(YELLOW + "Редактирование пользователя не меняя имени " + COLOR_RESET + user.getUsername());
             user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
             userRepository.save(user);
@@ -112,11 +98,9 @@ public class UserService implements UserDetailsService {
         }
         //Если новое имя из инпута совпадает со старым, то оно попадет в этот фильтр
         if (userFromDB != null) {
-            logger.info(YELLOW + "Попытка создания дубликата юзернэйма v REDACTOR " + COLOR_RESET + user.getUsername());
             return false;
         }
         //Если юзернейм новый, но поменялись любые другие поля, то пользователь попадает сюда
-        logger.info(YELLOW + "Создание нового юзера v REDACTOR " + COLOR_RESET + user.getUsername());
         user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
@@ -130,7 +114,6 @@ public class UserService implements UserDetailsService {
     public boolean delete(Long userId) {
         if (userRepository.findById(userId).isPresent()) {
             userRepository.deleteById(userId);
-            logger.info(YELLOW + "Удаление юзера" + COLOR_RESET);
             return true;
         }
         return false;
@@ -146,7 +129,6 @@ public class UserService implements UserDetailsService {
         if (roleRepository.findById(1L).orElse(null) == null) {
             roleRepository.save(roleUser);
             roleRepository.save(roleAdmin);
-            logger.info(YELLOW + "Добавлены роли по умолчанию" + COLOR_RESET);
         }
         if (userByUsername("admin") == null) {
             User user = new User(1L, "admin", bCryptPasswordEncoder.encode("100"));
@@ -154,13 +136,11 @@ public class UserService implements UserDetailsService {
             Set<Role> roleSet = Set.copyOf(roleList);
             user.setRoles(roleSet);
             userRepository.save(user);
-            logger.info(YELLOW + "Добавлен админ по умолчанию" + COLOR_RESET);
         }
         if (userByUsername("user") == null) {
             User user = new User(2L, "user", bCryptPasswordEncoder.encode("100"));
             user.setRoles(Collections.singleton(roleUser));
             userRepository.save(user);
-            logger.info(YELLOW + "Добавлен юзер по умолчанию" + COLOR_RESET);
 
         }
         if (userByUsername("num1") == null) {
@@ -169,7 +149,6 @@ public class UserService implements UserDetailsService {
             user.setLastName("N1");
             user.setRoles(Collections.singleton(roleUser));
             userRepository.save(user);
-            logger.info(YELLOW + "Добавлен num1" + COLOR_RESET);
 
         }
         if (userByUsername("num2") == null) {
@@ -178,7 +157,6 @@ public class UserService implements UserDetailsService {
             user.setLastName("N2");
             user.setRoles(Collections.singleton(roleUser));
             userRepository.save(user);
-            logger.info(YELLOW + "Добавлен num2" + COLOR_RESET);
 
         }
         if (userByUsername("test1") == null) {
@@ -187,7 +165,6 @@ public class UserService implements UserDetailsService {
             user.setLastName("T1");
             user.setRoles(Collections.singleton(roleUser));
             userRepository.save(user);
-            logger.info(YELLOW + "Добавлен t1" + COLOR_RESET);
 
         }
         if (userByUsername("test2") == null) {
@@ -196,7 +173,6 @@ public class UserService implements UserDetailsService {
             user.setLastName("T2");
             user.setRoles(Collections.singleton(roleUser));
             userRepository.save(user);
-            logger.info(YELLOW + "Добавлен t2" + COLOR_RESET);
         }
     }
 
