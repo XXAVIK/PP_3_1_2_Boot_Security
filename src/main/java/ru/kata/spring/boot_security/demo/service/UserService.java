@@ -28,12 +28,12 @@ public class UserService implements UserDetailsService {
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
-    public static final String COLOR_RESET = "\u001B[0m";
-
     // Declaring the color
-    // Custom declaration
+    public static final String COLOR_RESET = "\u001B[0m";
     public static final String YELLOW = "\u001B[33m";
-    Logger logger = LoggerFactory.getLogger(UserService.class);
+
+
+    private Logger logger = LoggerFactory.getLogger(UserService.class);
 
 
     @Autowired
@@ -82,48 +82,46 @@ public class UserService implements UserDetailsService {
 
             return false;
         }
+
         logger.info(YELLOW + "Создание нового юзера " + COLOR_RESET + user.getUsername());
         user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-
         userRepository.save(user);
+
         return true;
     }
 
     public boolean edit(User user) {
-        String usernameFromInput = user.getUsername();
-        String usernameFromDB = (userRepository.findById(user.getId()).orElse(null)).getUsername();
-        User userFromDB = userRepository.findByUsername(user.getUsername());
+        String usernameFromInput = user.getUsername(); //Получаю имя из инпута
+        String usernameFromDB = (userRepository.       //Получаю имя юзера с тем же айди из БД
+                findById(user.getId()).orElse(null)).getUsername();
+        //Получаю всего пользователя по имени
+        User userFromDB = userRepository.findByUsername(usernameFromInput);
 
-
-        if (usernameFromInput.equals(usernameFromDB)){
+        //Проверяю существует ли юзернэйм из инпута в БД
+        //Если уже существует, значит это либо пользователь без изменений, либо имя оставили без изменений
+        if (usernameFromInput.equals(usernameFromDB)) {
             logger.info(YELLOW + "Редактирование пользователя не меняя имени " + COLOR_RESET + user.getUsername());
             user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
             userRepository.save(user);
             return true;
         }
+        //Если новое имя из инпута совпадает со старым, то оно попадет в этот фильтр
         if (userFromDB != null) {
             logger.info(YELLOW + "Попытка создания дубликата юзернэйма v REDACTOR " + COLOR_RESET + user.getUsername());
             return false;
         }
+        //Если юзернейм новый, но поменялись любые другие поля, то пользователь попадает сюда
         logger.info(YELLOW + "Создание нового юзера v REDACTOR " + COLOR_RESET + user.getUsername());
         user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+
+        //Я чет не смог придумать лучше способа отлавливать случаи,когда в редакторе вводится уже сущ имя
+
         return true;
     }
-//    public boolean edit(User user) {
-//        User userFromDB = userRepository.findByUsername(user.getUsername());
-//
-//        if (userFromDB != null) {
-//            logger.info(YELLOW + "Попытка создания дубликата юзернэйма в редакторе " + COLOR_RESET + user.getUsername());
-//            return false;
-//        }
-//        logger.info(YELLOW + "Создание нового юзера В редакторе " + COLOR_RESET + user.getUsername());
-//        userRepository.save(user);
-//        return true;
-//    }
 
     public boolean delete(Long userId) {
         if (userRepository.findById(userId).isPresent()) {
@@ -134,7 +132,7 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
-
+    //  Создание пользователей и ролей по умолчанию
     @PostConstruct
     private void init() {
         Role roleUser = new Role(1L, "ROLE_USER");

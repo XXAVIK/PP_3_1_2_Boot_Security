@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.model;
 
 
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -20,7 +19,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username",unique = true)
+    @Column(name = "username", unique = true)
     @NotEmpty(message = "Field can't be empty!")
     private String username;
     @Column(name = "password")
@@ -96,10 +95,8 @@ public class User implements UserDetails {
                 ", firstName='" + username + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
-                ", " +
                 '}';
     }
-
 
 
     @Override

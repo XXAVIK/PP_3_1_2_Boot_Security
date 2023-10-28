@@ -24,18 +24,6 @@ public class SuccessUserHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException {
-//        Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
-//        if (roles.contains("ROLE_USER")) {
-//            httpServletResponse.sendRedirect("/user");
-//        } else {
-//            httpServletResponse.sendRedirect("/");
-//        }
-
-
-
-
-
-
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
         if (roles.contains("ROLE_ADMIN")) {
             httpServletResponse.sendRedirect("/admin");
@@ -45,7 +33,6 @@ public class SuccessUserHandler implements AuthenticationSuccessHandler {
             httpServletResponse.sendRedirect("/");
         }
         logger.info("------------------------------------------------------------------");
-        logger.info("Вход с ролью |->>"+Arrays.toString(roles.toArray()));
-//        System.out.println(Arrays.toString(roles.toArray()));
+        logger.info("Вход с ролью |->>" + Arrays.toString(roles.toArray()));
     }
 }

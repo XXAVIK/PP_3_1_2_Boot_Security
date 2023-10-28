@@ -4,12 +4,10 @@ package ru.kata.spring.boot_security.demo.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
@@ -17,16 +15,14 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 import javax.validation.Valid;
 import java.util.List;
 
+import static ru.kata.spring.boot_security.demo.service.UserService.COLOR_RESET;
+import static ru.kata.spring.boot_security.demo.service.UserService.YELLOW;
+
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
-    FieldError error = new FieldError("username", "username", "Username already exists");
-    public static final String COLOR_RESET = "\u001B[0m";
-
-    // Declaring the color
-    // Custom declaration
-    public static final String YELLOW = "\u001B[33m";
-    Logger logger = LoggerFactory.getLogger(AdminController.class);
+    public static final FieldError error = new FieldError("username", "username", "Username already exists");
+    private Logger logger = LoggerFactory.getLogger(AdminController.class);
     private UserService userService;
 
     @Autowired
@@ -44,7 +40,6 @@ public class AdminController {
 
     @PostMapping()
     public String createUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, Model model) {
-
         if (bindingResult.hasErrors()) {
             logger.info(YELLOW + "Ошибки в bindingResult" + COLOR_RESET);
             return "new";
@@ -54,7 +49,6 @@ public class AdminController {
             logger.info(YELLOW + "Попытка дубликата - лог пишется из пост контроллера" + COLOR_RESET);
             return "new";
         }
-        userService.save(user);
         return "redirect:/admin";
     }
 
@@ -70,17 +64,16 @@ public class AdminController {
     }
 
     @PatchMapping("{id}/patch")
-    public String edit(@ModelAttribute("user") @Valid User user, @PathVariable("id") Long id, BindingResult bindingResult) {
+    public String edit(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, @PathVariable("id") Long id) {
         if (bindingResult.hasErrors()) {
-            logger.info(YELLOW + "Ошибки в bindingResult" + COLOR_RESET);
-            return "new";
+            logger.info(YELLOW + "Ошибки в bindingResult - патч контроллер" + COLOR_RESET);
+            return "edit";
         }
         if (!userService.edit(user)) {
             logger.info(YELLOW + "Попытка дубликата - лог пишется из патч контроллера" + COLOR_RESET);
             bindingResult.addError(error);
-            return "new";
+            return "edit";
         }
-        userService.edit(user);
         return "redirect:/admin";
     }
 

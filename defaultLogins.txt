@@ -5,3 +5,19 @@ password - 100
 User
 login - user
 password - 100
+
+User
+login - test1
+password - 1
+
+User
+login - test2
+password - 2
+
+User
+login - num1
+password - 1
+
+User
+login - num2
+password - 2
