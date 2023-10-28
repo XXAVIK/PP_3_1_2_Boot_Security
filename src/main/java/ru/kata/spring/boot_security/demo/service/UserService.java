@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.RoleRepository;
@@ -74,6 +75,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
+    @Transactional
     public boolean save(User user) {
         User userFromDB = userRepository.findByUsername(user.getUsername());
 
@@ -91,6 +93,7 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
+    @Transactional
     public boolean edit(User user) {
         String usernameFromInput = user.getUsername(); //Получаю имя из инпута
         String usernameFromDB = (userRepository.       //Получаю имя юзера с тем же айди из БД
@@ -123,6 +126,7 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
+    @Transactional
     public boolean delete(Long userId) {
         if (userRepository.findById(userId).isPresent()) {
             userRepository.deleteById(userId);
