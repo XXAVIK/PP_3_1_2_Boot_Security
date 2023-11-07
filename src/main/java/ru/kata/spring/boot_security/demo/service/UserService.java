@@ -21,7 +21,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserService implements UserDetailsService {
+public class UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -32,18 +32,7 @@ public class UserService implements UserDetailsService {
     public static final String COLOR_RESET = "\u001B[0m";
     public static final String YELLOW = "\u001B[33m";
 
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-
-        if (user == null) {
-            throw new UsernameNotFoundException(String.format("User '%s' not found", username));
-        }
-
-        return user;
-    }
-    public User findByUsername(String name){
+    public User findByUsername(String name) {
         return userRepository.findByUsername(name);
     }
 
