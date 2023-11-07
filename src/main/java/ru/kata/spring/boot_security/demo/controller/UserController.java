@@ -1,8 +1,7 @@
 package ru.kata.spring.boot_security.demo.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,19 +17,15 @@ import static ru.kata.spring.boot_security.demo.service.UserService.COLOR_RESET;
 import static ru.kata.spring.boot_security.demo.service.UserService.YELLOW;
 
 @Controller
+@RequiredArgsConstructor
+@Slf4j
 public class UserController {
 
-    private Logger logger = LoggerFactory.getLogger(AdminController.class);
-    private UserService userService;
-
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
+    private final UserService userService;
 
     @GetMapping("/user")
     public String startUp(Model model, Principal principal) {
-        model.addAttribute("user", userService.userByUsername(principal.getName()));
+        model.addAttribute("user", userService.findByUsername(principal.getName()));
         return "user";
     }
 
@@ -38,12 +33,12 @@ public class UserController {
     public String createUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
-            logger.info(YELLOW + "Ошибки в bindingResult - registration" + COLOR_RESET);
+            log.info(YELLOW + "Ошибки в bindingResult - registration" + COLOR_RESET);
             return "registration";
         }
         if (!userService.save(user)) {
             bindingResult.addError(error);
-            logger.info(YELLOW + "Попытка дубликата - лог пишется из пост контроллера - registration" + COLOR_RESET);
+            log.info(YELLOW + "Попытка дубликата - лог пишется из пост контроллера - registration" + COLOR_RESET);
             return "registration";
         }
         return "redirect:/user";

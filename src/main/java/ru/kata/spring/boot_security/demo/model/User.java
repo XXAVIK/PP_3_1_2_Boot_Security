@@ -1,6 +1,8 @@
 package ru.kata.spring.boot_security.demo.model;
 
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.LazyCollection;
@@ -16,6 +18,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
+@Data
+@NoArgsConstructor // Без этого идея ругается, что у класса нет пустого конструктора,
+                   // наверное потому что у меня определен уже один кастомный констурктор
 public class User implements UserDetails {
 
     @Id
@@ -43,69 +48,11 @@ public class User implements UserDetails {
     private String email;
 
 
-    public User() {
-    }
-
     public User(Long id, String username, String password) {
         this.id = id;
         this.username = username;
         this.password = password;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return username;
-    }
-
-    public void setUsername(String firstName) {
-        this.username = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", firstName='" + username + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                '}';
-    }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

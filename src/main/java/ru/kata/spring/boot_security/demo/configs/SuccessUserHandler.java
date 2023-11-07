@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.configs;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -17,11 +18,9 @@ import java.util.Arrays;
 import java.util.Set;
 
 @Component
+@Slf4j
 public class SuccessUserHandler implements AuthenticationSuccessHandler {
     // Spring Security использует объект Authentication, пользователя авторизованной сессии.
-    Logger logger = LoggerFactory.getLogger(SuccessUserHandler.class);
-
-
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException {
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
@@ -32,7 +31,7 @@ public class SuccessUserHandler implements AuthenticationSuccessHandler {
         } else {
             httpServletResponse.sendRedirect("/");
         }
-        logger.info("------------------------------------------------------------------");
-        logger.info("Вход с ролью |->>" + Arrays.toString(roles.toArray()));
+        log.info("------------------------------------------------------------------");
+        log.info("Вход с ролью |->>" + Arrays.toString(roles.toArray()));
     }
 }
